@@ -37,11 +37,6 @@ class Ray {
 			float pYNumerator = (x1*y2 - y1*x2)*(y3-y4)-(y1-y2)*(x3*y4-y3*x4);
 			float den = (x1-x2)*(y3-y4) - (y1-y2)*(x3-x4);
 
-			// if(den = 0)
-			// {
-			// 	return {0, 0};
-			// }
-
 			float t = ((x1-x3)*(y3-y4) - (y1-y3)*(x3-x4)) / den;
 			float u = -((x1-x2)*(y1-y3) - (y1-y2)*(x1-x3)) / den;
 
@@ -50,30 +45,12 @@ class Ray {
 			{
 				x2 = x1+t * (x2-x1);
 				y2 = y1+t * (y2 - y1);
-				//length = x2 / cos(angle);
-
-				
 				length = sqrt(pow(x2 - x, 2) + pow(y2 - y, 2) * 1.0);
-				//length = distL * cos(this->angle);
-
-				return {x2, y2};
-				//return {pXNumerator / pXDenominator, pYNumerator / pYDenominator};
-			} else
-			{
-				//length = x2 / cos(angle);
-				return {x2, y2};
-
 			}
+			return {x2, y2};
 		}
 		void drawRay(sf::RenderWindow& rWindow)
 		{
-			if(angle > 2 * M_PI)
-			{
-				angle = 0;
-			} else if (angle < 0)
-			{
-				angle = 2 * M_PI;
-			}
 
 			sf::Vertex line[2];
 			line[0].position = sf::Vector2f(this->x, this->y);

@@ -2,13 +2,14 @@
 #include <iostream>
 #include <cmath>
 #include "Ray.h"
-//#include "Boundary.h"
+#include "Box.h"
 
 using namespace std;
 
 std::vector<Ray> rayVector;
 std::vector<Boundary> boundaryVector;
 std::vector<sf::RectangleShape> barVector;
+std::vector<Box> boxVector;
 
 int particleX;
 int particleY;
@@ -50,8 +51,16 @@ int main()
 	boundaryVector.insert(boundaryVector.begin(), lowerBoundary);
 	boundaryVector.insert(boundaryVector.begin(), leftBoundary);
 
+	Box testBox(100, 100, 150, 150);
+	Box testBox2(500, 500, 800, 800);
+	Box testBox3(100, 400, 200, 500);
+	boxVector.insert(boxVector.begin(), testBox);
+	boxVector.insert(boxVector.begin(), testBox2);
+	boxVector.insert(boxVector.begin(), testBox3);
 
-    sf::RenderWindow window(sf::VideoMode(windowW, windowH), "Ray-tracing 2D");
+
+
+    sf::RenderWindow window(sf::VideoMode(windowW, windowH), "test");
 
     while (window.isOpen())
     {
@@ -61,6 +70,10 @@ int main()
             if (event.type == sf::Event::Closed)
                 window.close();
         }
+
+		///
+		/// KEYBOARD EVENT CHECKING
+		///
 
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
 		{
@@ -79,39 +92,56 @@ int main()
 			}
 		}
 
+		// Clear window before drawing
         window.clear();
 
+
+		// Draw all rays and boundaries, while simultaneously checking each ray against each boundary 
 		for(int i = 0; i < rayVector.size(); i++)
 		{
 			rayVector.at(i).drawRay(window);
-			//cout << rayVector.at(i).length << endl;
+			
 			for(int j = 0; j < boundaryVector.size(); j++)
 			{
 				boundaryVector.at(j).drawBoundary(window);
 
-				int cpX = rayVector.at(i).getCollisionPoint(boundaryVector.at(j)).x;
-				int cpY = rayVector.at(i).getCollisionPoint(boundaryVector.at(j)).y;
+				float cpX = rayVector.at(i).getCollisionPoint(boundaryVector.at(j)).x;
+				float cpY = rayVector.at(i).getCollisionPoint(boundaryVector.at(j)).y;
+
 
 				rayVector.at(i).x = particleX;
 				rayVector.at(i).y = particleY;
 
 			}
+
+			for(int j = 0; j < boxVector.size(); j++)
+			{
+				boxVector.at(j).drawBox(window);
+
+				for(int l = 0; l < boxVector.at(j).boundaries.size(); l++)
+				{	
+					
+					float cpX = rayVector.at(i).getCollisionPoint(boxVector.at(j).boundaries.at(l)).x;
+					float cpY = rayVector.at(i).getCollisionPoint(boxVector.at(j).boundaries.at(l)).y;
+				}
+
+			}
 		}
 
-		particleX = sf::Mouse::getPosition(window).x;
-		particleY = sf::Mouse::getPosition(window).y;
-
+		// Render 3D half of screen
 		for (int i = 0; i < rayCount; i++)
 		{
 			sf::RectangleShape bar;
 			bar.setOrigin(1, windowH/2);
 			bar.setSize(sf::Vector2f(1, windowH));
-			bar.setPosition(windowW/2 + i, windowH/2);
-			bar.setFillColor(sf::Color(255, 255, 255, 5000 / rayVector.at(i).length));
+			bar.setPosition(windowW - i, windowH/2);
+			bar.setFillColor(sf::Color(0, 100, 255, 255 / rayVector.at(i).length + 200));
 			bar.scale(1, 100 / rayVector.at(i).length);
 			window.draw(bar);
 		}
 
+		particleX = sf::Mouse::getPosition(window).x;
+		particleY = sf::Mouse::getPosition(window).y;
         window.display();
     }
 
