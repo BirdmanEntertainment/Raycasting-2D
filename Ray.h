@@ -6,7 +6,7 @@ class Ray {
 		float x, y;
 		float x2, y2;
 
-		float angle = 0;
+		double angle = 0;
 		float baseLength = 1500;
 		float length;
 

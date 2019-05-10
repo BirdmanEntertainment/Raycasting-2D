@@ -27,6 +27,10 @@ class Box {
 
         void drawBox(sf::RenderWindow& rWindow)
         {
+            sf::RectangleShape fillIn(sf::Vector2f(x2-x1, y2-y1));
+            fillIn.setPosition(x1, y1);
+            fillIn.setFillColor(sf::Color(255, 255, 255, 255));
+            rWindow.draw(fillIn);
             for(int i = 0; i < boundaries.size(); i++)
             {
                 boundaries.at(i).drawBoundary(rWindow);
